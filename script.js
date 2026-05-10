@@ -3,20 +3,30 @@ const navMenu = document.getElementById('nav-menu'),
     navToggle = document.getElementById('nav-toggle'),
     navClose = document.getElementById('nav-close');
 
+const openMenu = () => {
+    if (!navMenu || !navToggle) return;
+
+    navMenu.classList.add('show-menu');
+    document.body.classList.add('menu-open');
+    navToggle.setAttribute('aria-expanded', 'true');
+};
+
+const closeMenu = () => {
+    if (!navMenu) return;
+
+    navMenu.classList.remove('show-menu');
+    document.body.classList.remove('menu-open');
+    navToggle?.setAttribute('aria-expanded', 'false');
+};
+
 /* Show Menu */
 if (navToggle && navMenu) {
-    navToggle.addEventListener('click', () => {
-        navMenu.classList.add('show-menu');
-        navToggle.setAttribute('aria-expanded', 'true');
-    });
+    navToggle.addEventListener('click', openMenu);
 }
 
 /* Hide Menu */
 if (navClose && navMenu) {
-    navClose.addEventListener('click', () => {
-        navMenu.classList.remove('show-menu');
-        navToggle?.setAttribute('aria-expanded', 'false');
-    });
+    navClose.addEventListener('click', closeMenu);
 }
 
 [navToggle, navClose].forEach(control => {
@@ -33,12 +43,20 @@ if (navClose && navMenu) {
 /* Remove Menu Mobile when clicking a link */
 const navLink = document.querySelectorAll('.nav-link');
 
-const linkAction = () => {
-    const navMenu = document.getElementById('nav-menu');
-    navMenu?.classList.remove('show-menu');
-    navToggle?.setAttribute('aria-expanded', 'false');
-}
-navLink.forEach(n => n.addEventListener('click', linkAction));
+navLink.forEach(n => n.addEventListener('click', closeMenu));
+
+document.addEventListener('click', event => {
+    if (!document.body.classList.contains('menu-open')) return;
+    if (navMenu?.contains(event.target) || navToggle?.contains(event.target)) return;
+
+    closeMenu();
+});
+
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+        closeMenu();
+    }
+});
 
 /* ================= STICKY HEADER ================= */
 const scrollHeader = () => {
