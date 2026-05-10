@@ -107,6 +107,43 @@ if (hero && heroImageStage) {
     heroImageStage.addEventListener('pointerleave', () => setHeroReveal(0));
 }
 
+/* ================= SCROLL REVEALS ================= */
+const revealTargets = document.querySelectorAll([
+    '.section-header',
+    '.about-img-box',
+    '.about-data',
+    '.service-card',
+    '.values-data',
+    '.values-img-box',
+    '.portfolio-card',
+    '.contact-data',
+    '.contact-form-container',
+    '.info-card',
+    '.footer-content'
+].join(','));
+
+if ('IntersectionObserver' in window && revealTargets.length) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+        });
+    }, {
+        threshold: 0.16,
+        rootMargin: '0px 0px -8% 0px'
+    });
+
+    revealTargets.forEach((target, index) => {
+        target.classList.add('reveal-on-scroll');
+        target.style.setProperty('--reveal-delay', `${Math.min(index % 6, 5) * 0.06}s`);
+        revealObserver.observe(target);
+    });
+} else {
+    revealTargets.forEach(target => target.classList.add('is-visible'));
+}
+
 /* ================= PORTFOLIO FILTER ================= */
 const filterItems = document.querySelectorAll('.filter-item');
 const portfolioCards = document.querySelectorAll('.portfolio-card');
